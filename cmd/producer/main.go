@@ -29,13 +29,16 @@ func main() {
 			log.Panic(err)
 		}
 	}()
-	msg := &sarama.ProducerMessage{
-		Topic: *topic,
-		Value: sarama.StringEncoder("Something Cool"),
+	a := []string{"Foo", "Bar"}
+	for _, s := range a {
+		msg := &sarama.ProducerMessage{
+			Topic: *topic,
+			Value: sarama.StringEncoder(s),
+		}
+		partition, offset, err := producer.SendMessage(msg)
+		if err != nil {
+			log.Panic(err)
+		}
+		log.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", *topic, partition, offset)
 	}
-	partition, offset, err := producer.SendMessage(msg)
-	if err != nil {
-		log.Panic(err)
-	}
-	log.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", *topic, partition, offset)
 }
